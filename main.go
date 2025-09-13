@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/paaw-potsawee/binary-adder/internal/handlers/quiz"
@@ -15,9 +15,9 @@ func main() {
 	app.Get("/quiz", quiz.GetQuiz)
 	app.Post("/quiz/check", quiz.CheckQuiz)
 
-	log.Println("Listening on :3000")
-	err := app.Listen(":3000")
-	if err != nil {
-		log.Fatal(err)
-    }
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	app.Listen(":" + port)
 }
