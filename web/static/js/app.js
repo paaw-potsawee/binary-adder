@@ -5,12 +5,20 @@ const loadQuiz = async () => {
   document.getElementById("number2").innerText = jsonRes.b;
 };
 
-const checkQuiz = async () => {
+const checkQuiz = async (e) => {
+  e.preventDefault();
   const answer = document.getElementById("answer");
   const isCorrect = document.getElementById("isCorrect");
   const A = document.getElementById("number1");
   const B = document.getElementById("number2");
-  if (!answer.value || answer.value.length != 2) return;
+
+  const hexRegex = /^[0-9a-fA-F]{2}$/;
+  if (!answer.value || !hexRegex.test(answer.value)) {
+    updateColor(isCorrect, "yellow");
+    isCorrect.innerText = "Please enter 2-digit hex number";
+    answer.value = "";
+    return;
+  }
   try {
     const res = await fetch("/quiz/check", {
       method: "POST",
@@ -23,12 +31,14 @@ const checkQuiz = async () => {
         answer: answer.value.toLowerCase(),
       }),
     });
-    jsonRes = await res.json();
+    const jsonRes = await res.json();
     answer.value = "";
     if (jsonRes.is_correct == true) {
+      updateColor(isCorrect, "green");
       isCorrect.innerText = "correct";
       await loadQuiz();
     } else {
+      updateColor(isCorrect, "red");
       isCorrect.innerText = "wrong try again";
       return;
     }
@@ -37,8 +47,14 @@ const checkQuiz = async () => {
   }
 };
 
+function updateColor(tag, color) {
+  tag.style.color = color;
+}
+
 window.onload = () => {
   loadQuiz();
 };
 
-document.getElementById("submit-answer").addEventListener("click", checkQuiz);
+document
+  .getElementById("form-answer")
+  .addEventListener("submit", (e) => checkQuiz(e));
