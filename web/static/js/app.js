@@ -1,14 +1,23 @@
 let option = "";
-const loadQuiz = async () => {
-  const res = await fetch("/quiz");
-  const jsonRes = await res.json();
-  document.getElementById("number1").innerText = jsonRes.a;
-  document.getElementById("number2").innerText = jsonRes.b;
-  document.getElementById("option").innerText = jsonRes.option;
-  option = jsonRes.option;
+const loadQuiz = () => {
+  const A = document.getElementById("number1");
+  const B = document.getElementById("number2");
+  const optionTag = document.getElementById("option");
+  A.innerText = "loading ...";
+  B.innerText = "loading ...";
+  optionTag.innerText = "loading ...";
+  fetch("/quiz")
+    .then((response) => response.json())
+    .then((data) => {
+      A.innerText = data.a;
+      B.innerText = data.b;
+      optionTag.innerText = data.option;
+      option = data.option;
+    })
+    .catch((err) => console.error(err));
 };
 
-const checkQuiz = async (e) => {
+const checkQuiz = (e) => {
   e.preventDefault();
   const answer = document.getElementById("answer");
   const isCorrect = document.getElementById("isCorrect");
@@ -22,33 +31,33 @@ const checkQuiz = async (e) => {
     answer.value = "";
     return;
   }
-  try {
-    const res = await fetch("/quiz/check", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        a: A.textContent,
-        b: B.textContent,
-        answer: answer.value.toLowerCase(),
-        option: option,
-      }),
-    });
-    const jsonRes = await res.json();
-    answer.value = "";
-    if (jsonRes.is_correct == true) {
-      updateColor(isCorrect, "green");
-      isCorrect.innerText = "correct";
-      await loadQuiz();
-    } else {
-      updateColor(isCorrect, "red");
-      isCorrect.innerText = "wrong try again";
-      return;
-    }
-  } catch (error) {
-    console.error("Failed to check ", error);
-  }
+  isCorrect.innerText = "loading ...";
+  fetch("/quiz/check", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      a: A.textContent,
+      b: B.textContent,
+      answer: answer.value.toLowerCase(),
+      option: option,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      answer.value = "";
+      if (data.is_correct == true) {
+        updateColor(isCorrect, "green");
+        isCorrect.innerText = "correct";
+        loadQuiz();
+      } else {
+        updateColor(isCorrect, "red");
+        isCorrect.innerText = "wrong try again";
+        return;
+      }
+    })
+    .catch((err) => console.error(err));
 };
 
 function updateColor(tag, color) {
