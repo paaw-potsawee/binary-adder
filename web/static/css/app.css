@@ -69,3 +69,13 @@ body {
   color: #17a2b8;
   text-shadow: 0 1px 2px #212529;
 }
+
+.option {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0.5rem 0 1rem 0;
+  color: #00bcd4; /* cyan accent for option */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px #212529;
+}

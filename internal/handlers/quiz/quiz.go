@@ -11,12 +11,14 @@ import (
 type Quiz struct {
 	A string `json:"a"`
 	B string `json:"b"`
+	Option string `json:"option"`
 }
 
 type CheckRequest struct {
 	A string `json:"a"` 
 	B string `json:"b"` 
 	Answer string `json:"answer"` 
+	Option string `json:"option"`
 }
 
 type CheckResponse struct {
@@ -29,7 +31,9 @@ func GetQuiz(c *fiber.Ctx) error {
 	A := fmt.Sprintf("%08b",randombyte1)
 	B := fmt.Sprintf("%08b",randombyte2)
 	
-	quiz := Quiz{A: A, B: B}
+	options := []string{"add","sub","xor","shift"}
+	randomOption := options[rand.Intn(len(options))]
+	quiz := Quiz{A: A, B: B,Option:randomOption}
 
 	return c.JSON(quiz)
 }
@@ -49,9 +53,26 @@ func CheckQuiz(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"invalid input"})
 	}
 
-	sum := (a + b) & 0xFF
 
-	hexStr := fmt.Sprintf("%02x",sum)
+	var hexStr string 
+	switch req.Option {
+	case "add":
+		sum := (a + b) & 0xFF
+		hexStr = fmt.Sprintf("%02x",sum)
+	case "sub":
+		result := (a - b) & 0xFF
+		hexStr = fmt.Sprintf("%02x",result)
+	case "xor":
+		result := (a ^ b)
+		hexStr = fmt.Sprintf("%02x",result)
+	case "shift":
+		result := a << 1
+		hexStr = fmt.Sprintf("%02x",result)
+	default:
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"invalid input option"})
+	}
+
+
 
 	res := CheckResponse{IsCorrect: hexStr == req.Answer}
 

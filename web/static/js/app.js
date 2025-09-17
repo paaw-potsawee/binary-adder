@@ -1,8 +1,11 @@
+let option = "";
 const loadQuiz = async () => {
   const res = await fetch("/quiz");
   const jsonRes = await res.json();
   document.getElementById("number1").innerText = jsonRes.a;
   document.getElementById("number2").innerText = jsonRes.b;
+  document.getElementById("option").innerText = jsonRes.option;
+  option = jsonRes.option;
 };
 
 const checkQuiz = async (e) => {
@@ -29,6 +32,7 @@ const checkQuiz = async (e) => {
         a: A.textContent,
         b: B.textContent,
         answer: answer.value.toLowerCase(),
+        option: option,
       }),
     });
     const jsonRes = await res.json();
