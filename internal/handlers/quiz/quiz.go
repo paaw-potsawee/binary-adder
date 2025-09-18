@@ -66,7 +66,7 @@ func CheckQuiz(c *fiber.Ctx) error {
 		result := (a ^ b)
 		hexStr = fmt.Sprintf("%02x",result)
 	case "shift":
-		result := a << 1
+		result := (a << 1) & 0xFF
 		hexStr = fmt.Sprintf("%02x",result)
 	default:
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"invalid input option"})
