@@ -1,23 +1,23 @@
 let option = "";
-const loadQuiz = () => {
+const loadQuiz = async () => {
   const A = document.getElementById("number1");
   const B = document.getElementById("number2");
   const optionTag = document.getElementById("option");
-  A.innerText = "loading ...";
-  B.innerText = "loading ...";
-  optionTag.innerText = "loading ...";
+  loadingText(A, "00000000");
+  loadingText(B, "00000000");
+  loadingText(optionTag, "......");
   fetch("/quiz")
     .then((response) => response.json())
     .then((data) => {
-      A.innerText = data.a;
-      B.innerText = data.b;
-      optionTag.innerText = data.option;
+      clearLoading(A, data.a);
+      clearLoading(B, data.b);
+      clearLoading(optionTag, data.option);
       option = data.option;
     })
     .catch((err) => console.error(err));
 };
 
-const checkQuiz = (e) => {
+const checkQuiz = async (e) => {
   e.preventDefault();
   const answer = document.getElementById("answer");
   const isCorrect = document.getElementById("isCorrect");
@@ -31,7 +31,7 @@ const checkQuiz = (e) => {
     answer.value = "";
     return;
   }
-  isCorrect.innerText = "loading ...";
+  loadingText(isCorrect, ".....");
   fetch("/quiz/check", {
     method: "POST",
     headers: {
@@ -49,11 +49,11 @@ const checkQuiz = (e) => {
       answer.value = "";
       if (data.is_correct == true) {
         updateColor(isCorrect, "green");
-        isCorrect.innerText = "correct";
+        clearLoading(isCorrect, "correct");
         loadQuiz();
       } else {
         updateColor(isCorrect, "red");
-        isCorrect.innerText = "wrong try again";
+        clearLoading(isCorrect, "wrong! try again");
         return;
       }
     })
@@ -64,9 +64,21 @@ function updateColor(tag, color) {
   tag.style.color = color;
 }
 
+function clearLoading(tag, keyword) {
+  tag.classList.remove("loading-font");
+  tag.innerText = keyword;
+}
+
+function loadingText(tag, keyword) {
+  tag.classList.add("loading-font");
+  tag.innerText = keyword;
+}
+
 window.onload = () => {
   loadQuiz();
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 document
   .getElementById("form-answer")
