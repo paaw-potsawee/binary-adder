@@ -1,8 +1,6 @@
 package quiz
 
 import (
-	"fmt"
-	"math/rand"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -26,15 +24,12 @@ type CheckResponse struct {
 }
 
 func GetQuiz(c *fiber.Ctx) error {
-	randombyte1 := rand.Intn(256)
-	randombyte2 := rand.Intn(256)
-	A := fmt.Sprintf("%08b",randombyte1)
-	B := fmt.Sprintf("%08b",randombyte2)
-	
+	mode := c.Query("mode","random")
 	options := []string{"add","sub","xor","shift"}
-	randomOption := options[rand.Intn(len(options))]
-	quiz := Quiz{A: A, B: B,Option:randomOption}
-
+	quiz,err := genQuiz(mode,&options) 
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error":"invalid mode"})	
+	}
 	return c.JSON(quiz)
 }
 
@@ -53,28 +48,10 @@ func CheckQuiz(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"invalid input"})
 	}
 
-
-	var hexStr string 
-	switch req.Option {
-	case "add":
-		sum := (a + b) & 0xFF
-		hexStr = fmt.Sprintf("%02x",sum)
-	case "sub":
-		result := (a - b) & 0xFF
-		hexStr = fmt.Sprintf("%02x",result)
-	case "xor":
-		result := (a ^ b)
-		hexStr = fmt.Sprintf("%02x",result)
-	case "shift":
-		result := (a << 1) & 0xFF
-		hexStr = fmt.Sprintf("%02x",result)
-	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"invalid input option"})
+	res,err := checkQuiz(req.Option,a,b,req.Answer) 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":err.Error()})
 	}
-
-
-
-	res := CheckResponse{IsCorrect: hexStr == req.Answer}
 
 	return c.JSON(res)
 }
