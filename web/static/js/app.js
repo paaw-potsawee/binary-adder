@@ -1,4 +1,6 @@
 let option = "";
+let mode = "random"; // default mode
+
 const loadQuiz = async () => {
   const A = document.getElementById("number1");
   const B = document.getElementById("number2");
@@ -6,7 +8,7 @@ const loadQuiz = async () => {
   loadingText(A, "00000000");
   loadingText(B, "00000000");
   loadingText(optionTag, "......");
-  fetch("/quiz")
+  fetch(`/quiz?mode=${mode}`)
     .then((response) => response.json())
     .then((data) => {
       clearLoading(A, data.a);
@@ -74,7 +76,19 @@ function loadingText(tag, keyword) {
   tag.innerText = keyword;
 }
 
+document.querySelectorAll(".mode-btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    mode = btn.getAttribute("data-mode");
+    document
+      .querySelectorAll(".mode-btn")
+      .forEach((b) => b.classList.remove("active-mode"));
+    btn.classList.add("active-mode");
+    loadQuiz();
+  });
+});
+
 window.onload = () => {
+  document.getElementById("mode-random").classList.add("active-mode");
   loadQuiz();
 };
 

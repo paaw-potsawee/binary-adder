@@ -70,6 +70,14 @@ body {
   text-shadow: 0 1px 2px #212529;
 }
 
+#isCorrect:empty {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+}
+
 .option {
   font-size: 1.3rem;
   font-weight: 600;
@@ -97,4 +105,36 @@ body {
   100% {
     background-position: 100% 50%;
   }
+}
+
+.mode-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin: 2.5rem;
+}
+
+.mode-btn {
+  background: #495057;
+  color: #ffc107;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(52, 58, 64, 0.08);
+}
+
+.mode-btn:hover {
+  background: #212529;
+  color: #ffecb3;
+}
+
+.active-mode {
+  background: #ffc107;
+  color: #343a40;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
 }
