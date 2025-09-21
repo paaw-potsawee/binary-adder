@@ -108,10 +108,14 @@ body {
 }
 
 .mode-group {
-  display: flex;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
   margin: 2.5rem;
+  width: 100%;
+  max-width: 340px;
 }
 
 .mode-btn {
@@ -126,6 +130,7 @@ body {
   cursor: pointer;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   box-shadow: 0 1px 4px rgba(52, 58, 64, 0.08);
+  width: 100%;
 }
 
 .mode-btn:hover {
@@ -137,4 +142,42 @@ body {
   background: #ffc107;
   color: #343a40;
   box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+}
+
+/* Responsive grid for mode buttons */
+@media (min-width: 400px) {
+  .mode-group {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  #mode-random {
+    grid-column: 1 / span 2;
+  }
+  #mode-add {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  #mode-sub {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  #mode-xor {
+    grid-row: 3;
+    grid-column: 1;
+  }
+  #mode-shift {
+    grid-row: 3;
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 399px) {
+  .mode-group {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, auto);
+    max-width: 95vw;
+  }
+  .mode-btn {
+    width: 100%;
+  }
 }
